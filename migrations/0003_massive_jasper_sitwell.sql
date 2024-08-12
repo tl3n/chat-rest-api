@@ -1,0 +1,1 @@
+ALTER TABLE "files_table" DROP COLUMN IF EXISTS "size";

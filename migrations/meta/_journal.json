@@ -15,6 +15,27 @@
       "when": 1723455763319,
       "tag": "0001_jittery_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1723470913962,
+      "tag": "0002_equal_lucky_pierre",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1723472773789,
+      "tag": "0003_massive_jasper_sitwell",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1723472983868,
+      "tag": "0004_first_shocker",
+      "breakpoints": true
     }
   ]
 }

@@ -58,6 +58,6 @@ profile*
 *flamegraph*
 
 build/
+uploads/
 
 .env
-dist

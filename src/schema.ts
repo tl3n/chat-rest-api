@@ -1,5 +1,4 @@
 import {
-  AnyPgColumn,
   integer,
   pgTable,
   serial,
@@ -21,17 +20,13 @@ export const messagesTable = pgTable("messages_table", {
   sentAt: timestamp("sent_at").notNull().defaultNow(),
   type: text("type").notNull(),
   content: text("content"),
-  fileId: integer("file_id").references((): AnyPgColumn => filesTable.id),
+  fileId: integer("file_id").references(() => filesTable.id),
 });
 
 export const filesTable = pgTable("files_table", {
   id: serial("id").primaryKey(),
-  messageId: integer("message_id")
-    .notNull()
-    .references(() => messagesTable.id),
   name: text("name").notNull(),
-  contentType: text("content-type").notNull(),
-  size: integer("size").notNull(),
+  contentType: text("content_type").notNull(),
   path: text("path").notNull(),
 });
 
