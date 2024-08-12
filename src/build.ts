@@ -14,7 +14,7 @@ export async function build(opts?: FastifyServerOptions) {
   // it's ok, because then fastify() is called with default settings.
   const app = fastify(opts).withTypeProvider<TypeBoxTypeProvider>();
 
-  app.register(fastifyBasicAuth, { validate: validateUser });
+  app.register(fastifyBasicAuth, { validate: validateUser, authenticate: true });
   app.register(fastifyMultipart, {
     limits: {
       files: 1,

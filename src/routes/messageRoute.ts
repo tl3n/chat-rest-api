@@ -5,7 +5,8 @@ import {
 import {
   uploadFile,
   getMessagesList,
-} from "../controllers/messageController.js";
+  contentHandler
+} from "../handlers/messageHandlers.js";
 import { createMessage } from "../queries/insert.js";
 
 const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
@@ -41,6 +42,7 @@ const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
   app.get(
     "/message/list",
     {
+      preHandler: app.basicAuth,
       schema: {
         querystring: {
           page: Type.Optional(Type.Integer({ minimum: 1 })),
@@ -50,6 +52,8 @@ const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
     },
     getMessagesList
   );
+
+  app.get("/message/content/:id", { preHandler: app.basicAuth }, contentHandler);
 };
 
 export default messageRoute;

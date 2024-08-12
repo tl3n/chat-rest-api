@@ -2,9 +2,19 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import fs from "node:fs";
 import util from "node:util";
 import { pipeline } from "node:stream";
-import { missingFileError, fileTooBigError, pageOutOfRange } from "../errors.js";
+import {
+  missingFileError,
+  fileTooBigError,
+  pageOutOfRange,
+  missingMessageError,
+} from "../errors.js";
 import { createFile } from "../queries/insert.js";
-import { getMessagesCount, getMessagesPagination } from "../queries/select.js";
+import {
+  getFileById,
+  getMessageById,
+  getMessagesCount,
+  getMessagesPagination,
+} from "../queries/select.js";
 
 type PaginationQueryParams = { page: number; limit: number };
 
@@ -59,7 +69,6 @@ export const getMessagesList = async (
     throw new pageOutOfRange();
   }
 
-
   const messages = await getMessagesPagination(limit, offset);
   const pagination = {
     prevPage: page > 1 ? page - 1 : null,
@@ -73,4 +82,26 @@ export const getMessagesList = async (
     messages,
     pagination,
   });
+};
+
+export const contentHandler = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { id } = request.params as { id: number };
+  const message = (await getMessageById(id))[0];
+
+  if (!message) {
+    throw new missingMessageError();
+  }
+
+  if (message.type === "text") {
+    reply.header("content-type", "text/plain").send(message.content);
+  }
+  else {
+    const file = (await getFileById(message.fileId!))[0];
+    const content = fs.readFileSync(file.path);
+    reply.header("content-type", file.contentType).send(content);
+  }
+  
 };

@@ -1,6 +1,6 @@
 import { db } from "../db/db.js";
 import { eq, count } from "drizzle-orm";
-import { messagesTable, SelectUser, usersTable } from "../db/schema.js";
+import { messagesTable, filesTable, SelectUser, usersTable } from "../db/schema.js";
 
 export async function getUserByUsername(
   username: SelectUser["username"]
@@ -20,4 +20,12 @@ export async function getMessagesCount() {
 
 export async function getMessagesPagination(limit: number, offset: number) {
   return db.select().from(messagesTable).limit(limit).offset(offset);
+}
+
+export async function getMessageById(id: number) {
+  return db.select().from(messagesTable).where(eq(messagesTable.id, id));
+}
+
+export async function getFileById(id: number) {
+  return db.select().from(filesTable).where(eq(filesTable.id, id));
 }
