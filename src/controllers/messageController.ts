@@ -9,6 +9,7 @@ export const uploadFile = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
+  // check if file was sent
   const data = await request.file();
   if (!data) {
     throw new missingFileError();
@@ -38,5 +39,5 @@ export const uploadFile = async (
     path: filepath,
   });
 
-  reply.send("file uploaded successfuly");
+  reply.send("file uploaded successfully");
 };
