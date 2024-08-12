@@ -2,8 +2,11 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import fs from "node:fs";
 import util from "node:util";
 import { pipeline } from "node:stream";
-import { missingFileError, fileTooBigError } from "../errors.js";
+import { missingFileError, fileTooBigError, pageOutOfRange } from "../errors.js";
 import { createFile } from "../queries/insert.js";
+import { getMessagesCount, getMessagesPagination } from "../queries/select.js";
+
+type PaginationQueryParams = { page: number; limit: number };
 
 export const uploadFile = async (
   request: FastifyRequest,
@@ -40,4 +43,34 @@ export const uploadFile = async (
   });
 
   reply.send("file uploaded successfully");
+};
+
+export const getMessagesList = async (
+  request: FastifyRequest,
+  reply: FastifyReply
+) => {
+  const { page = 1, limit = 10 } = request.query as PaginationQueryParams;
+
+  const offset = (page - 1) * limit;
+  const messagesCount = (await getMessagesCount())[0].count;
+  const pagesCount = Math.ceil(messagesCount / limit);
+
+  if (page > pagesCount) {
+    throw new pageOutOfRange();
+  }
+
+
+  const messages = await getMessagesPagination(limit, offset);
+  const pagination = {
+    prevPage: page > 1 ? page - 1 : null,
+    currentPage: page,
+    nextPage: page < pagesCount ? page + 1 : null,
+    pagesCount,
+    messagesCount,
+  };
+
+  reply.send({
+    messages,
+    pagination,
+  });
 };

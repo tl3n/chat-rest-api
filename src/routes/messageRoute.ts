@@ -2,7 +2,10 @@ import {
   FastifyPluginAsyncTypebox,
   Type,
 } from "@fastify/type-provider-typebox";
-import { uploadFile } from "../controllers/messageController.js";
+import {
+  uploadFile,
+  getMessagesList,
+} from "../controllers/messageController.js";
 import { createMessage } from "../queries/insert.js";
 
 const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
@@ -33,6 +36,19 @@ const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
       preHandler: app.basicAuth,
     },
     uploadFile
+  );
+
+  app.get(
+    "/message/list",
+    {
+      schema: {
+        querystring: {
+          page: Type.Optional(Type.Integer({ minimum: 1 })),
+          limit: Type.Optional(Type.Integer({ minimum: 1 })),
+        },
+      },
+    },
+    getMessagesList
   );
 };
 

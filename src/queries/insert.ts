@@ -1,4 +1,4 @@
-import { db } from "../db.js";
+import { db } from "../db/db.js";
 import {
   InsertUser,
   InsertMessage,
@@ -6,7 +6,7 @@ import {
   usersTable,
   messagesTable,
   filesTable,
-} from "../schema.js";
+} from "../db/schema.js";
 
 export async function createUser(data: InsertUser) {
   await db.insert(usersTable).values(data);
