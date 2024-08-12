@@ -27,6 +27,7 @@
   "dependencies": {
     "@fastify/basic-auth": "^5.1.1",
     "@fastify/error": "^4.0.0",
+    "@fastify/multipart": "^8.3.0",
     "@fastify/type-provider-typebox": "^4.0.0",
     "@neondatabase/serverless": "^0.9.4",
     "@types/bcryptjs": "^2.4.6",

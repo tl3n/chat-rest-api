@@ -1,15 +1,30 @@
-import fastify, { FastifyServerOptions } from "fastify";
-import { createError } from "@fastify/error";
+import fastify, {
+  FastifyServerOptions,
+} from "fastify";
+import { notFoundError } from "./errors.js";
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import registerRoute from "./routes/registerRoute.js";
+import messageRoute from "./routes/messageRoute.js";
+import fastifyMultipart from "@fastify/multipart";
+import fastifyBasicAuth from "@fastify/basic-auth";
+import { validateUser } from "./utils.js";
 
 export async function build(opts?: FastifyServerOptions) {
   // opts here may be undefined.
   // it's ok, because then fastify() is called with default settings.
   const app = fastify(opts).withTypeProvider<TypeBoxTypeProvider>();
 
-  // TODO: move it to the routes register 
+  app.register(fastifyBasicAuth, { validate: validateUser });
+  app.register(fastifyMultipart, {
+    limits: {
+      files: 1,
+      fileSize: 5242880, // 5 MB
+    },
+  });
+
+  // TODO: move it to the routes register
   app.register(registerRoute);
+  app.register(messageRoute);
 
   app.setErrorHandler(async (error, request, reply) => {
     request.log.error({ error });
@@ -18,7 +33,6 @@ export async function build(opts?: FastifyServerOptions) {
   });
 
   app.setNotFoundHandler(async (request, response) => {
-    const notFoundError = createError("NotFound", "Page not found", 404);
     throw new notFoundError();
   });
 

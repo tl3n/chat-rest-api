@@ -30,7 +30,7 @@ export const filesTable = pgTable("files_table", {
     .notNull()
     .references(() => messagesTable.id),
   name: text("name").notNull(),
-  type: text("text").notNull(),
+  contentType: text("content-type").notNull(),
   size: integer("size").notNull(),
   path: text("path").notNull(),
 });

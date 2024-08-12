@@ -8,6 +8,13 @@
       "when": 1723382477033,
       "tag": "0000_freezing_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723455763319,
+      "tag": "0001_jittery_slipstream",
+      "breakpoints": true
     }
   ]
 }
