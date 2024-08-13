@@ -1,57 +1,21 @@
 import {
   FastifyPluginAsyncTypebox,
-  Type,
 } from "@fastify/type-provider-typebox";
 import {
-  uploadFile,
-  getMessagesList,
-  contentHandler
+  textHandler,
+  fileHandler,
+  listHandler,
+  contentHandler,
 } from "../handlers/messageHandlers.js";
-import { createMessage } from "../queries/insert.js";
+import { MessageTextBody } from "../utils/types.js";
+import { messageTextSchema, messageListSchema } from "../utils/schemas.js";
 
-const messageRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
-  app.post(
-    "/message/text",
-    {
-      preHandler: app.basicAuth,
-      schema: {
-        body: Type.Object({
-          content: Type.String(),
-        }),
-      },
-    },
-    async (request, reply) => {
-      // writing message to the db
-      await createMessage({
-        userId: request.userId!,
-        type: "text",
-        content: request.body.content.trim(),
-      });
-      reply.send("message sent successfully");
-    }
-  );
+const messageRoute: FastifyPluginAsyncTypebox = async (app) => {
+  app.post<{ Body: MessageTextBody }>("/message/text", { ...messageTextSchema, preHandler: app.basicAuth }, textHandler);
 
-  app.post(
-    "/message/file",
-    {
-      preHandler: app.basicAuth,
-    },
-    uploadFile
-  );
+  app.post("/message/file", { preHandler: app.basicAuth }, fileHandler);
 
-  app.get(
-    "/message/list",
-    {
-      preHandler: app.basicAuth,
-      schema: {
-        querystring: {
-          page: Type.Optional(Type.Integer({ minimum: 1 })),
-          limit: Type.Optional(Type.Integer({ minimum: 1 })),
-        },
-      },
-    },
-    getMessagesList
-  );
+  app.get("/message/list", { ...messageListSchema, preHandler: app.basicAuth }, listHandler);
 
   app.get("/message/content/:id", { preHandler: app.basicAuth }, contentHandler);
 };

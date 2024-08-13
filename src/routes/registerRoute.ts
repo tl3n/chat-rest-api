@@ -1,33 +1,9 @@
 import {
-  Type,
   FastifyPluginAsyncTypebox,
 } from "@fastify/type-provider-typebox";
-import { createUser } from "../queries/insert.js";
-import bcrypt from "bcryptjs";
+import { registerSchema } from "../utils/schemas.js";
+import { registerHandler } from "../handlers/registerHandlers.js";
 
-const registerRoute: FastifyPluginAsyncTypebox = async (app, opts) => {
-  app.post(
-    "/register",
-    {
-      schema: {
-        body: Type.Object({
-          username: Type.String(),
-          password: Type.String(),
-        }),
-      },
-    },
-    async (request, reply) => {
-      const { username, password } = request.body;
-
-      bcrypt.hash(password, 10, async (error, hash) => {
-        if (error) throw error;
-
-        await createUser({ username, password: hash });
-      });
-
-      reply.send("user registered");
-    }
-  );
+export const registerRoute: FastifyPluginAsyncTypebox = async (app) => {
+  app.post("/register", registerSchema, registerHandler)
 };
-
-export default registerRoute;

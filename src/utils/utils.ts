@@ -1,4 +1,4 @@
-import { getUserByUsername } from "./queries/select.js";
+import { getUserByUsername } from "../queries/select.js";
 import bcrypt from "bcryptjs";
 import { missingUserError } from "./errors.js";
 import { FastifyRequest } from "fastify";

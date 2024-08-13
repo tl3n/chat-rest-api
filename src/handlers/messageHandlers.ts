@@ -7,21 +7,27 @@ import {
   fileTooBigError,
   pageOutOfRange,
   missingMessageError,
-} from "../errors.js";
-import { createFile } from "../queries/insert.js";
+} from "../utils/errors.js";
+import { createMessage, createFile } from "../queries/insert.js";
 import {
   getFileById,
   getMessageById,
   getMessagesCount,
   getMessagesPagination,
 } from "../queries/select.js";
+import { MessageTextBody, MessageListQueryParams } from "../utils/types.js"
 
-type PaginationQueryParams = { page: number; limit: number };
+export const textHandler = async (request: FastifyRequest<{ Body: MessageTextBody }>, reply: FastifyReply) => {
+  // writing message to the db
+  await createMessage({
+    userId: request.userId as number,
+    type: "text",
+    content: request.body.content.trim(),
+  });
+  reply.send("message sent successfully");
+};
 
-export const uploadFile = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) => {
   // check if file was sent
   const data = await request.file();
   if (!data) {
@@ -46,7 +52,7 @@ export const uploadFile = async (
   }
 
   // writing file data to the db
-  await createFile(request.userId!, {
+  await createFile(request.userId as number, {
     name: filename,
     contentType: data.mimetype,
     path: filepath,
@@ -55,11 +61,8 @@ export const uploadFile = async (
   reply.send("file uploaded successfully");
 };
 
-export const getMessagesList = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
-  const { page = 1, limit = 10 } = request.query as PaginationQueryParams;
+export const listHandler = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { page = 1, limit = 10 } = request.query as MessageListQueryParams;
 
   const offset = (page - 1) * limit;
   const messagesCount = (await getMessagesCount())[0].count;
@@ -84,10 +87,7 @@ export const getMessagesList = async (
   });
 };
 
-export const contentHandler = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
+export const contentHandler = async (request: FastifyRequest, reply: FastifyReply) => {
   const { id } = request.params as { id: number };
   const message = (await getMessageById(id))[0];
 
@@ -97,11 +97,17 @@ export const contentHandler = async (
 
   if (message.type === "text") {
     reply.header("content-type", "text/plain").send(message.content);
-  }
-  else {
+  } else {
     const file = (await getFileById(message.fileId!))[0];
-    const content = fs.readFileSync(file.path);
+    let content: Buffer;
+
+    try {
+      content = fs.readFileSync(file.path);
+    } catch (error) {
+      throw new missingFileError();
+    }
+    
+
     reply.header("content-type", file.contentType).send(content);
   }
-  
 };
