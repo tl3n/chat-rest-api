@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres:16
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_DB=chat-rest-api
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  migration:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: migration
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/chat-rest-api
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: server
+    volumes:
+      - uploads:/app/uploads
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/chat-rest-api
+    ports:
+      - 3000:3000
+    depends_on:
+      - migration
+
+volumes:
+  pgdata:
+  uploads:
