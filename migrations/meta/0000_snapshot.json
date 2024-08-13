@@ -1,5 +1,5 @@
 {
-  "id": "35739287-e517-4c10-ad68-5877d82bdcc7",
+  "id": "618b168b-accd-48bf-b7e7-fe5be2a8e7f9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -14,27 +14,15 @@
           "primaryKey": true,
           "notNull": true
         },
-        "message_id": {
-          "name": "message_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
         "name": {
           "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "text": {
-          "name": "text",
+        "content_type": {
+          "name": "content_type",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "size": {
-          "name": "size",
-          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -46,21 +34,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "files_table_message_id_messages_table_id_fk": {
-          "name": "files_table_message_id_messages_table_id_fk",
-          "tableFrom": "files_table",
-          "tableTo": "messages_table",
-          "columnsFrom": [
-            "message_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

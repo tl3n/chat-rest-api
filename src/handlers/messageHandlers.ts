@@ -68,6 +68,11 @@ export const listHandler = async (request: FastifyRequest, reply: FastifyReply) 
   const messagesCount = (await getMessagesCount())[0].count;
   const pagesCount = Math.ceil(messagesCount / limit);
 
+  if (pagesCount === 0) {
+    reply.send("no messages yet")
+    return;
+  }
+
   if (page > pagesCount) {
     throw new pageOutOfRange();
   }

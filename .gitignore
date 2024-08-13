@@ -61,3 +61,6 @@ build/
 uploads/
 
 .env
+
+Dockerfile
+.dockerignore
