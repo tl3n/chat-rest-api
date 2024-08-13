@@ -4,7 +4,7 @@ import { missingUserError } from "./errors.js";
 import { FastifyRequest } from "fastify";
 
 export async function validateUser(username: string, password: string, request: FastifyRequest) {
-  const user = (await getUserByUsername(username))[0];
+  const user = await getUserByUsername(username);
 
   if (!user || !bcrypt.compareSync(password, user.password)) {
     throw new missingUserError();

@@ -8,12 +8,33 @@ import messageRoute from "./routes/messageRoute.js";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyBasicAuth from "@fastify/basic-auth";
 import { validateUser } from "./utils/utils.js";
+import { fastifySwagger } from "@fastify/swagger";
+import { fastifySwaggerUi } from "@fastify/swagger-ui";
 
 export async function build(opts?: FastifyServerOptions) {
   const app = fastify(opts).withTypeProvider<TypeBoxTypeProvider>();
 
   // fastify plugins
+  // OpenAPI documentation
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "Chat REST API",
+        description: "using Fastify, Drizzle ORM and a couple more stuff",
+        version: "6.9"
+      },
+    },
+  });
+
+  app.register(fastifySwaggerUi, {
+    routePrefix: "/documentation",
+    staticCSP: true
+  });
+
+  // Basic Authentication
   app.register(fastifyBasicAuth, { validate: validateUser, authenticate: true });
+  
+  // File uploads
   app.register(fastifyMultipart, {
     limits: {
       files: 1,

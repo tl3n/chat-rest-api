@@ -19,12 +19,12 @@ import { MessageTextBody, MessageListQueryParams } from "../utils/types.js"
 
 export const textHandler = async (request: FastifyRequest<{ Body: MessageTextBody }>, reply: FastifyReply) => {
   // writing message to the db
-  await createMessage({
+  const message = await createMessage({
     userId: request.userId as number,
     type: "text",
     content: request.body.content.trim(),
   });
-  reply.send("message sent successfully");
+  reply.send(message);
 };
 
 export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -52,13 +52,13 @@ export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) 
   }
 
   // writing file data to the db
-  await createFile(request.userId as number, {
+  const file = await createFile(request.userId as number, {
     name: filename,
     contentType: data.mimetype,
     path: filepath,
   });
 
-  reply.send("file uploaded successfully");
+  reply.send(file);
 };
 
 export const listHandler = async (request: FastifyRequest, reply: FastifyReply) => {

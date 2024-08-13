@@ -9,17 +9,18 @@ import {
 } from "../db/schema.js";
 
 export async function createUser(data: InsertUser) {
-  await db.insert(usersTable).values(data);
+  return (await db.insert(usersTable).values(data).returning())[0];
 }
 
 export async function createMessage(data: InsertMessage) {
-  await db.insert(messagesTable).values(data);
+  return (await db.insert(messagesTable).values(data).returning())[0];
 }
 
 export async function createFile(userId: number, data: InsertFile) {
-  const fileId = (await db
-    .insert(filesTable)
-    .values(data)
-    .returning({ insertedId: filesTable.id }))[0].insertedId;
+  const file = (await db.insert(filesTable).values(data).returning())[0];
+
+  const fileId = file.id;
   createMessage({ type: "file", userId, fileId });
+
+  return file;
 }
