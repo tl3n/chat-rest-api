@@ -1,0 +1,8 @@
+build
+node_modules
+
+uploads
+.env
+
+.gitignore
+README.md
