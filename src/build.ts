@@ -27,7 +27,7 @@ export async function build(opts?: FastifyServerOptions) {
   });
 
   app.register(fastifySwaggerUi, {
-    routePrefix: "/documentation",
+    routePrefix: "/docs",
     staticCSP: true
   });
 
@@ -47,9 +47,8 @@ export async function build(opts?: FastifyServerOptions) {
   app.register(messageRoute);
 
   app.setErrorHandler(async (error, request, reply) => {
-    request.log.error({ error });
-    reply.code(error.statusCode || 500);
-    return { error };
+    //request.log.error({ error });
+    reply.code(error.statusCode || 500).send({"error": error.message});
   });
 
   app.setNotFoundHandler(async () => {

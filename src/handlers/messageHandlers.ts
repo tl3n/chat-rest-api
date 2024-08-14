@@ -24,7 +24,7 @@ export const textHandler = async (request: FastifyRequest<{ Body: MessageTextBod
     type: "text",
     content: request.body.content.trim(),
   });
-  reply.send(message);
+  reply.status(201).send(message);
 };
 
 export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -58,7 +58,7 @@ export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) 
     path: filepath,
   });
 
-  reply.send(file);
+  reply.status(201).send(file);
 };
 
 export const listHandler = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -69,7 +69,7 @@ export const listHandler = async (request: FastifyRequest, reply: FastifyReply) 
   const pagesCount = Math.ceil(messagesCount / limit);
 
   if (pagesCount === 0) {
-    reply.send("no messages yet")
+    reply.status(200).send("no messages yet")
     return;
   }
 
@@ -86,7 +86,7 @@ export const listHandler = async (request: FastifyRequest, reply: FastifyReply) 
     messagesCount,
   };
 
-  reply.send({
+  reply.status(200).send({
     messages,
     pagination,
   });
@@ -113,6 +113,6 @@ export const contentHandler = async (request: FastifyRequest, reply: FastifyRepl
     }
     
 
-    reply.header("content-type", file.contentType).send(content);
+    reply.status(200).header("content-type", file.contentType).send(content);
   }
 };

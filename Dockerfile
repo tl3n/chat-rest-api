@@ -6,12 +6,12 @@ COPY package*.json ./
 
 RUN npm install
 
-RUN npm run generateMigration
-
 COPY . .
+
+RUN npm run generateMigration
 
 CMD ["npm", "run", "start"]
 
-FROM base as migration
+FROM server as migration
 
 CMD ["npm", "run", "migrate"]

@@ -14,5 +14,5 @@ export const registerHandler = async (request: FastifyRequest, reply: FastifyRep
   const hash = await bcrypt.hash(password, 10);
   const user = await createUser({ username, password: hash });    
 
-  reply.send(user);
+  reply.status(201).send({id: user.id, username: user.username});
 };
