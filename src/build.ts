@@ -48,7 +48,7 @@ export async function build(opts?: FastifyServerOptions) {
 
   app.setErrorHandler(async (error, request, reply) => {
     //request.log.error({ error });
-    reply.code(error.statusCode || 500).send({"error": error.message});
+    reply.code(error.statusCode || 500).send(error);
   });
 
   app.setNotFoundHandler(async () => {
