@@ -10,6 +10,10 @@ import {
 import { MessageTextBody } from "../utils/types.js";
 import { messageTextSchema, messageListSchema, messageFileSchema, messageContentSchema } from "../utils/schemas.js";
 
+/**
+ * 
+ * app.basicAuth можна винести в плагін, а не приккручувати до кожного роута окремо
+ */
 const messageRoute: FastifyPluginAsyncTypebox = async (app) => {
   app.post<{ Body: MessageTextBody }>("/message/text", { ...messageTextSchema, preHandler: app.basicAuth }, textHandler);
 

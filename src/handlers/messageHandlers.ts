@@ -17,8 +17,13 @@ import {
 } from "../queries/select.js";
 import { MessageTextBody, MessageListQueryParams } from "../utils/types.js"
 
+/**
+ * 
+ * Не до кінця пророблена структура. Бажано розбивати на handler і logic
+ * 
+ */
+
 export const textHandler = async (request: FastifyRequest<{ Body: MessageTextBody }>, reply: FastifyReply) => {
-  // writing message to the db
   const message = await createMessage({
     userId: request.userId as number,
     type: "text",
@@ -29,6 +34,10 @@ export const textHandler = async (request: FastifyRequest<{ Body: MessageTextBod
 
 export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) => {
   // check if file was sent
+    // writing message to the db
+  /**
+   * text logic
+   */
   const data = await request.file();
   if (!data) {
     throw new missingFileError();
@@ -58,6 +67,9 @@ export const fileHandler = async (request: FastifyRequest, reply: FastifyReply) 
     path: filepath,
   });
 
+    /**
+   * text handler
+   */
   reply.status(201).send(file);
 };
 
